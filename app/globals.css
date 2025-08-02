@@ -1,0 +1,328 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Variables for mobile-optimized dark theme */
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+  }
+}
+
+/* Base styles for mobile optimization */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    @apply h-full;
+    /* Prevent iOS bounce scrolling */
+    overscroll-behavior: none;
+    /* Improve font rendering on mobile */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevent text size adjust on mobile */
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  body {
+    @apply bg-background text-foreground h-full;
+    /* Prevent pull-to-refresh on mobile */
+    overscroll-behavior-y: none;
+    /* Improve touch scrolling */
+    -webkit-overflow-scrolling: touch;
+    /* Prevent user selection on mobile UI elements */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    /* Improve tap behavior */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* Allow text selection in editor and content areas */
+  .selectable {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    user-select: text;
+  }
+
+  /* Mobile-optimized focus styles */
+  *:focus-visible {
+    @apply ring-2 ring-ring ring-offset-2 ring-offset-background outline-none;
+  }
+
+  /* Improve button accessibility on mobile */
+  button, [role="button"] {
+    @apply touch-manipulation no-tap-highlight;
+    min-height: 44px; /* iOS recommended touch target */
+    min-width: 44px;
+  }
+
+  /* Input styles for mobile */
+  input, textarea, select {
+    @apply touch-manipulation;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  /* Custom scrollbar for desktop/tablet */
+  @media (min-width: 768px) {
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+      @apply bg-muted;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      @apply bg-muted-foreground/30 rounded-md;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      @apply bg-muted-foreground/50;
+    }
+  }
+}
+
+/* Mobile-specific component styles */
+@layer components {
+  /* Mobile navigation */
+  .mobile-nav {
+    @apply fixed bottom-0 left-0 right-0 z-mobile-nav;
+    @apply bg-background/95 backdrop-blur-sm border-t border-border;
+    @apply safe-area-padding;
+    height: calc(60px + env(safe-area-inset-bottom));
+  }
+
+  /* Mobile header */
+  .mobile-header {
+    @apply fixed top-0 left-0 right-0 z-mobile-nav;
+    @apply bg-background/95 backdrop-blur-sm border-b border-border;
+    @apply safe-area-padding;
+    height: calc(56px + env(safe-area-inset-top));
+  }
+
+  /* Mobile drawer */
+  .mobile-drawer {
+    @apply fixed inset-0 z-mobile-modal;
+    @apply bg-background;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .mobile-drawer.open {
+    transform: translateY(0);
+  }
+
+  /* Touch-friendly buttons */
+  .touch-button {
+    @apply min-h-touch min-w-touch flex items-center justify-center;
+    @apply rounded-touch bg-secondary hover:bg-accent;
+    @apply transition-colors duration-200;
+    @apply touch-manipulation no-tap-highlight;
+  }
+
+  /* Mobile editor container */
+  .mobile-editor {
+    @apply h-mobile-editor overflow-hidden;
+    @apply bg-cursor-bg text-cursor-text;
+  }
+
+  /* Mobile chat interface */
+  .mobile-chat {
+    @apply fixed inset-x-0 bottom-0 z-mobile-modal;
+    @apply bg-background border-t border-border;
+    @apply safe-area-padding;
+    max-height: 70vh;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .mobile-chat.open {
+    transform: translateY(0);
+  }
+
+  /* Loading states */
+  .loading-skeleton {
+    @apply animate-pulse bg-muted rounded;
+  }
+
+  /* Ghost text for mobile */
+  .ghost-text {
+    @apply text-muted-foreground/60 italic;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Mobile-optimized modal */
+  .mobile-modal {
+    @apply fixed inset-0 z-mobile-modal;
+    @apply bg-background;
+    @apply animate-slide-up;
+  }
+
+  /* Gesture indicators */
+  .swipe-indicator {
+    @apply absolute top-2 left-1/2 transform -translate-x-1/2;
+    @apply w-12 h-1 bg-muted-foreground/30 rounded-full;
+  }
+
+  /* Virtual keyboard spacing */
+  .keyboard-padding {
+    padding-bottom: env(keyboard-inset-height, 0px);
+  }
+
+  /* Performance optimizations */
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  .will-change-scroll {
+    will-change: scroll-position;
+  }
+
+  /* Safe area utilities */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Utility classes */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Mobile-specific hiding/showing */
+  .mobile-only {
+    @apply block;
+  }
+
+  .desktop-only {
+    @apply hidden;
+  }
+
+  @media (min-width: 768px) {
+    .mobile-only {
+      @apply hidden;
+    }
+
+    .desktop-only {
+      @apply block;
+    }
+  }
+
+  /* Performance utilities */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* Touch feedback */
+  .touch-feedback {
+    transition: transform 0.1s ease;
+  }
+
+  .touch-feedback:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Monaco Editor mobile optimizations */
+.monaco-editor {
+  @apply font-mono;
+}
+
+.monaco-editor .view-lines {
+  @apply leading-relaxed;
+}
+
+/* Mobile-specific Monaco overrides */
+@media (max-width: 768px) {
+  .monaco-editor {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+
+  .monaco-editor .margin {
+    width: 40px !important;
+  }
+
+  .monaco-editor .minimap {
+    display: none !important;
+  }
+
+  .monaco-editor .suggest-widget {
+    max-height: 200px !important;
+  }
+}
+
+/* PWA enhancements */
+@media (display-mode: standalone) {
+  body {
+    user-select: none;
+  }
+
+  .selectable {
+    user-select: text;
+  }
+}

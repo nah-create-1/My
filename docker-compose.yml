@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+  ai-cursor-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - workspace_data:/app/workspace
+      - model_cache:/app/models
+      - training_outputs:/app/training_outputs
+      - ./backend:/app/backend:ro  # Mount backend for development
+    environment:
+      - ENVIRONMENT=development
+      - TRANSFORMERS_CACHE=/app/models
+      - HF_HOME=/app/models
+      - CUDA_VISIBLE_DEVICES=0  # Adjust for your GPU setup
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Optional: Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # Optional: MongoDB for persistent storage
+  mongodb:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    restart: unless-stopped
+
+  # Development services (frontend dev server)
+  frontend-dev:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+    profiles:
+      - dev
+
+  # Optional: Nginx reverse proxy for production
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - ai-cursor-app
+    restart: unless-stopped
+    profiles:
+      - production
+
+volumes:
+  workspace_data:
+    driver: local
+  model_cache:
+    driver: local
+  training_outputs:
+    driver: local
+  redis_data:
+    driver: local
+  mongodb_data:
+    driver: local
+
+networks:
+  default:
+    name: ai-cursor-network
