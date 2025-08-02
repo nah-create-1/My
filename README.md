@@ -1,17 +1,46 @@
-# AI Cursor Clone
+# 🎯 AI Cursor Perfect Clone
 
-A powerful AI-powered code editor built with React and FastAPI, featuring the Qwen Coder v3 model with sensorless capabilities.
+The most advanced and complete Cursor AI clone ever created, featuring all of Cursor's powerful AI capabilities with enhanced privacy and customization options.
 
-## 🚀 Features
+## 🌟 **Perfect Cursor Feature Parity**
 
-- **AI Code Completions**: Real-time code suggestions powered by Qwen Coder v3
-- **Intelligent Chat Assistant**: Context-aware AI assistant for coding help
-- **Advanced Code Editor**: Monaco Editor with syntax highlighting and IntelliSense
-- **File Explorer**: Full-featured file management system
-- **Sensorless AI Mode**: Custom-trained model for privacy-focused coding
-- **Real-time Collaboration**: WebSocket-based live updates
-- **Custom Training**: Train the model on your own datasets
-- **Docker Support**: Easy deployment and development setup
+### 🎼 **Cursor Composer** (`Ctrl+K`)
+Multi-file AI editing and refactoring - the crown jewel of Cursor AI
+- **Smart task planning**: AI breaks down complex changes into actionable steps
+- **Multi-file operations**: Edit multiple files simultaneously
+- **Real-time execution**: Watch AI make changes across your codebase
+- **Preview & approve**: Review all changes before applying
+
+### 🔮 **Cursor Tab** (Ghost Text)
+Intelligent inline code completions that predict what you want to write
+- **Real-time suggestions**: AI predicts your next code as you type
+- **Accept partially**: Use `Ctrl+→` to accept word by word
+- **Context-aware**: Smart triggering based on code context
+- **Multiple types**: Single line, multi-line, and block completions
+
+### ⌘ **Command Palette** (`Ctrl+Shift+P`)
+AI-powered command center with instant access to all features
+- **Smart search**: Find commands, files, and AI actions instantly
+- **AI commands**: Generate, explain, refactor, fix, optimize code
+- **Recent history**: Quick access to frequently used commands
+- **Multiple modes**: Commands, AI generation, file search
+
+### 📋 **Cursor Rules** (`.cursorrules`)
+Customize AI behavior for your specific project and coding style
+- **Project-specific AI**: Tailor responses to your preferences
+- **Custom rules**: Define patterns, enforcement levels, and actions
+- **Code style preferences**: Functional, OOP, or mixed patterns
+- **Smart exclusions**: Skip files and patterns you don't want AI to process
+
+## 🚀 Advanced Features
+
+- **Sensorless AI Mode**: Complete privacy with local model processing
+- **Enhanced Chat Interface**: Context-aware conversations with file understanding
+- **Advanced Code Editor**: Monaco Editor with Cursor-style enhancements
+- **Real-time Collaboration**: WebSocket-based live updates and synchronization
+- **Custom Training Pipeline**: Train the model on your own codebase
+- **Git Integration**: AI-powered commit messages and change analysis
+- **Performance Optimization**: GPU acceleration and efficient memory usage
 
 ## 🛠️ Technology Stack
 
@@ -46,12 +75,13 @@ A powerful AI-powered code editor built with React and FastAPI, featuring the Qw
 
 ## 🚀 Quick Start
 
-### Using Docker (Recommended)
+### **Instant Setup** (Recommended)
 
-1. **Clone the repository**
+1. **Clone and setup automatically**
    ```bash
-   git clone https://github.com/your-username/ai-cursor-clone.git
-   cd ai-cursor-clone
+   git clone https://github.com/your-username/ai-cursor-perfect-clone.git
+   cd ai-cursor-perfect-clone
+   chmod +x setup.sh && ./setup.sh
    ```
 
 2. **Start the application**
@@ -61,7 +91,22 @@ A powerful AI-powered code editor built with React and FastAPI, featuring the Qw
 
 3. **Access the application**
    - Open your browser to `http://localhost:8000`
-   - The AI model will download automatically on first run
+   - Start coding with AI superpowers! 🚀
+
+### **🎯 Try Cursor Features Immediately**
+
+1. **Open Composer**: Press `Ctrl+K` and try:
+   ```
+   "Add TypeScript types to all functions in this file"
+   "Refactor this component to use React hooks"
+   "Add error handling to all API calls"
+   ```
+
+2. **Use Tab Completions**: Start typing code and see AI suggestions appear as ghost text
+
+3. **Command Palette**: Press `Ctrl+Shift+P` for instant access to all AI features
+
+4. **Create `.cursorrules`**: Customize AI behavior for your project
 
 ### Local Development
 

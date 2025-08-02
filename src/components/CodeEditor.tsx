@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Editor from '@monaco-editor/react'
-import { X } from 'lucide-react'
+import { X, Sparkles, Command } from 'lucide-react'
 import { FileService } from '../services/FileService'
 import { AIService } from '../services/AIService'
 import { FileContent, CompletionRequest } from '../types'
+import { CursorTab } from './CursorTab'
+import { CommandPalette } from './CommandPalette'
+import { Composer } from './Composer'
 
 interface CodeEditorProps {
   currentFile: string | null
@@ -28,6 +31,9 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   const [tabs, setTabs] = useState<EditorTab[]>([])
   const [editorContent, setEditorContent] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
+  const [isComposerOpen, setIsComposerOpen] = useState(false)
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([])
   const editorRef = useRef<any>(null)
   const monacoRef = useRef<any>(null)
 
@@ -175,9 +181,31 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       }
     })
 
-    // Handle Ctrl+S for save
+    // Cursor-specific keyboard shortcuts
+    
+    // Ctrl+S for save
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
       handleSave()
+    })
+
+    // Ctrl+Shift+P for command palette
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyP, () => {
+      setIsCommandPaletteOpen(true)
+    })
+
+    // Ctrl+K for Composer
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK, () => {
+      const selection = editor.getSelection()
+      if (selection && !selection.isEmpty()) {
+        setSelectedFiles([currentFile || ''])
+      }
+      setIsComposerOpen(true)
+    })
+
+    // Ctrl+I for inline editing
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyI, () => {
+      // Trigger inline AI edit mode
+      triggerInlineEdit()
     })
 
     // Setup WebSocket for real-time AI assistance
@@ -187,6 +215,17 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         console.log('Received AI suggestion:', data)
       }
     })
+  }
+
+  const triggerInlineEdit = () => {
+    if (!editorRef.current || !currentFile) return
+
+    const selection = editorRef.current.getSelection()
+    if (selection && !selection.isEmpty()) {
+      // Show inline edit interface
+      console.log('Triggering inline edit for selection')
+      // This would open an inline AI edit interface
+    }
   }
 
   const getLanguageFromFile = (filePath: string) => {
@@ -246,31 +285,80 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             <div className="text-editor-text">Loading...</div>
           </div>
         ) : (
-          <Editor
-            height="100%"
-            language={getLanguageFromFile(currentFile)}
-            value={editorContent}
-            onChange={handleEditorChange}
-            onMount={handleEditorDidMount}
-            theme="vs-dark"
-            options={{
-              fontFamily: 'JetBrains Mono, Monaco, Cascadia Code, Roboto Mono, monospace',
-              fontSize: 14,
-              lineHeight: 20,
-              minimap: { enabled: true },
-              wordWrap: 'on',
-              automaticLayout: true,
-              scrollBeyondLastLine: false,
-              renderWhitespace: 'selection',
-              bracketPairColorization: { enabled: true },
-              guides: {
-                bracketPairs: true,
-                indentation: true
-              }
-            }}
-          />
+          <>
+            <Editor
+              height="100%"
+              language={getLanguageFromFile(currentFile)}
+              value={editorContent}
+              onChange={handleEditorChange}
+              onMount={handleEditorDidMount}
+              theme="vs-dark"
+              options={{
+                fontFamily: 'JetBrains Mono, Monaco, Cascadia Code, Roboto Mono, monospace',
+                fontSize: 14,
+                lineHeight: 20,
+                minimap: { enabled: true },
+                wordWrap: 'on',
+                automaticLayout: true,
+                scrollBeyondLastLine: false,
+                renderWhitespace: 'selection',
+                bracketPairColorization: { enabled: true },
+                guides: {
+                  bracketPairs: true,
+                  indentation: true
+                }
+              }}
+            />
+            
+            {/* Cursor Tab Integration */}
+            <CursorTab
+              editor={editorRef.current}
+              monaco={monacoRef.current}
+              currentFile={currentFile}
+              onSuggestionAccepted={(suggestion) => {
+                console.log('Suggestion accepted:', suggestion)
+              }}
+            />
+          </>
         )}
+        
+        {/* AI Action Buttons */}
+        <div className="absolute top-4 right-4 flex space-x-2 z-10">
+          <button
+            onClick={() => setIsComposerOpen(true)}
+            className="p-2 bg-editor-sidebar hover:bg-editor-border rounded-md border border-editor-border"
+            title="Open Composer (Ctrl+K)"
+          >
+            <Sparkles size={16} className="text-blue-400" />
+          </button>
+          <button
+            onClick={() => setIsCommandPaletteOpen(true)}
+            className="p-2 bg-editor-sidebar hover:bg-editor-border rounded-md border border-editor-border"
+            title="Command Palette (Ctrl+Shift+P)"
+          >
+            <Command size={16} className="text-editor-text" />
+          </button>
+        </div>
       </div>
+
+      {/* Command Palette */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onCommand={(command) => {
+          console.log('Command executed:', command)
+        }}
+        currentFile={currentFile}
+        editor={editorRef.current}
+      />
+
+      {/* Composer */}
+      <Composer
+        isOpen={isComposerOpen}
+        onClose={() => setIsComposerOpen(false)}
+        selectedFiles={selectedFiles}
+        initialPrompt=""
+      />
 
       {/* Status Bar */}
       <div className="h-6 bg-editor-accent flex items-center justify-between px-3 text-xs text-white">
